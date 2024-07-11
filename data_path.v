@@ -39,6 +39,5 @@ module dataPath(
     wire [31 : 0] immShifted = immD << 2;
 
     // forward muxes
-
-    // shitty test
+    
 endmodule

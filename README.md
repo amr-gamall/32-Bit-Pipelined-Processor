@@ -11,17 +11,17 @@
             2. No need for forward logic of the branch instruction because the sink is already at the decode stage.
             3. Some downs is that the $T_c$ kind of increase by very small fraction which might be neglected (due to the increase of critical path, specifically $T_{mem} + {T_{mux}}$).
 
-- The microarchitecture is synthesiable.
+- The microarchitecture is synthesizeable.
 
 ****
 ## Dependencies 
 - python
 - GTKwave or any wave simulator (for simulation purposes)
-- Your synthesir tool (for synthesis purposes)
+- Your synthesis tool (for synthesis purposes)
 - Your uploader and driver ready for uploading.
 ****
 ## Usage
 
 - Run `python simulate.py <file>.hex` with the appropriate hex file, you can view the outputs at `output.vcd` 
 
-- Run `python synthesise.py <synthesizer tool> <uploader> <Baud rate> <protocol>` to syntehsize and upload
+- Run `python synthesize.py <synthesizer tool> <uploader> <Baud rate> <protocol>` to synthesize and upload
