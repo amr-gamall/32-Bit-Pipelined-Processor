@@ -1,9 +1,9 @@
 // 1kb data memory for MIPS microarch
 
-module dataMemory (
+module instructionMemory (
     input               clk, rst,
     input      [31 : 0] address,
-    output [31 : 0] dataOutput
+    output [31 : 0] instr
 );
     reg [31 : 0] data [1023 : 0];
     integer  i;
@@ -14,5 +14,5 @@ module dataMemory (
         end
     end
 
-    assign dataOutput = data[address];
+    assign instr = data[address];
 endmodule
