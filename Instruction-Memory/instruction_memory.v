@@ -12,7 +12,9 @@ module instructionMemory (
             for(i = 2;i < 1024;i++)
                 data[i] <= 0;
             data[0] <= 32'b000000_10100_01010_01010_00000_100000; // add $t1, $t1, $some other register
-            data[1] <= 32'b000000_10100_01010_01010_00000_100000; // add $t1, $t1, $some other register
+            data[1] <= 32'b000100_01010_01010_0000000000000011;   // beq $t1, $t1, add(5)
+            data[5] <= 32'b000000_10100_01010_01010_00000_100000; // add $t1, $t1, $some other register
+
         end
     end
 

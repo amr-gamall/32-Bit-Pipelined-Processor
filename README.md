@@ -7,7 +7,7 @@
     - Changing the forward sink to the decode stage instead of the execute stage  
         - reasons : 
             1. Less wire cluttering.
-            2. No needed stall anymore because lw forwards directly to the decode stage.
+            2. No needed stall anymore because `lw` instruction forwards directly to the decode stage.
             2. No need for forward logic of the branch instruction because the sink is already at the decode stage.
             3. Some downs is that the $T_c$ kind of increase by very small fraction which might be neglected (due to the increase of critical path, specifically $T_{mem} + {T_{mux}}$).
 
