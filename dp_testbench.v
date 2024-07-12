@@ -38,6 +38,15 @@ module tb;
         regDst = 1;
         mem2Reg = 0;
 
+        @(negedge clk);
+        regWrite = 1;
+        memWrite = 0;
+        fad = 0; 
+        fbd = 1;
+        aluSrcB = 0;
+        regDst = 1;
+        mem2Reg = 0;
+
         #400;
         $finish;
     end
