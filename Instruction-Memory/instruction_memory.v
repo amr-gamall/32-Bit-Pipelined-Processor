@@ -1,8 +1,8 @@
 // 1kb data memory for MIPS microarch
 
 module instructionMemory (
-    input               clk, rst,
-    input      [31 : 0] address,
+    input           clk, rst,
+    input  [31 : 0] address,
     output [31 : 0] instr
 );
     reg [31 : 0] data [1023 : 0];
