@@ -19,6 +19,7 @@ module tb;
         $dumpvars(0, tb);
         flush = 0;
 
+        aluControl = 2;
         clk = 0;
         // resetting pc
         pcSrc = 0;
@@ -33,11 +34,11 @@ module tb;
         memWrite = 0;
         fad = 0; 
         fbd = 0;
-        aluSrcB = 0;
+        aluSrcB = 1;
         regDst = 0;
         mem2Reg = 1;
 
-        #250;
+        #400;
         $finish;
     end
 

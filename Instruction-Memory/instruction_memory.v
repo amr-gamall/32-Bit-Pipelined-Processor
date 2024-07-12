@@ -9,9 +9,10 @@ module instructionMemory (
     integer  i;
     always @(posedge clk, posedge rst) begin
         if(rst)begin
-            for(i = 1;i < 1024;i++)
+            for(i = 2;i < 1024;i++)
                 data[i] <= 0;
             data[0] <= 32'h8C0A0020;                              // lw $t1, 32($0), t1 = 5
+            data[1] <= 32'h8C0A0021;                              // lw $t1, 32($0), t1 = 5
         end
     end
 

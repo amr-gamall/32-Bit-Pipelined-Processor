@@ -22,10 +22,7 @@ module dataPath(
     assign opcode = instr[31 : 26];
 
     // fetch stage
-    wire [31 : 0]addToPC;   
-    assign  addToPC = pcSrc ? 4 : immShiftedD; // why this wrong 
-    reg [31 : 0] PC; always@(posedge clk, posedge rst)if(rst)PC <= 0; else PC <= PC + addToPC;
-
+    reg [31 : 0] PC; always@(posedge clk, posedge rst)if(rst)PC <= 0; else PC <= PC + (pcSrc ? immShiftedD : 1);
     wire [31 : 0] instr;
     instructionMemory IM(.clk(clk), .rst(rst), .instruction(instr), .address(PC));
 
@@ -42,7 +39,7 @@ module dataPath(
                 .dataWrite(writeRegData), .addressA(rsD), .addressB(rtD), .dataA(rsDataD),
                 .dataB(rtDataD));
     wire [31 : 0] immD; assign immD = {instrD[15]?16'hffff : 16'h0000 , instrD[15 : 0]};
-    wire [31 : 0] immShiftedD = immD << 2;
+    wire [31 : 0] immShiftedD = immD;
     assign eq = &(~(rsDataFD ^ rtDataFD));
     // forward muxes
     always @(*) begin
@@ -91,10 +88,10 @@ module dataPath(
         end
     end
     // execute stage
-    wire [31 : 0] operand2; assign operand2 = aluSrcBE?rtDataE : immE;
+    wire [31 : 0] operand2; assign operand2 = aluSrcBE?immE : rtDataE;
     wire [31 : 0] aluOutE;
     ALU a(.SrcA(rsDataE), .SrcB(operand2), .ALUControl(aluControlE), .ALUResult(aluOutE));
-    wire [4 : 0] writeRegE; assign writeRegE = regDst?rtE:rdE;
+    wire [4 : 0] writeRegE; assign writeRegE = regDstE?rdE:rtE;
 
 
 
@@ -142,7 +139,7 @@ module dataPath(
         end
     end
 
-    wire [31 : 0] writeRegData; assign writeRegData = mem2RegWB? aluOutWB : memDataWB;
+    wire [31 : 0] writeRegData; assign writeRegData = mem2RegWB? memDataWB : aluOutWB;
 endmodule
 
 // Register file nomenclature
