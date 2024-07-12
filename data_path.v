@@ -10,28 +10,29 @@ module dataPath(
     input              regWrite, regDst, memWrite, mem2Reg, aluSrcB, pcSrc,
     input      [2 : 0] aluControl,
     // for control/hazard
-    output reg [5 : 0] opcode, funct,
+    output     [5 : 0] opcode, funct,
     output             eq,
 
     // hazard inputs
     input      [1 : 0] fad, fbd,
     input              flush
 );
+    // control outputs
+    assign funct = instr[5 : 0];
+    assign opcode = instr[31 : 26];
 
     // fetch stage
-    wire addToPC;    assign  addToPC = pcSrc ? immShiftedD : 4;
+    wire [31 : 0]addToPC;   
+    assign  addToPC = pcSrc ? 4 : immShiftedD; // why this wrong 
     reg [31 : 0] PC; always@(posedge clk, posedge rst)if(rst)PC <= 0; else PC <= PC + addToPC;
 
-    wire [31 : 0]instr;
+    wire [31 : 0] instr;
     instructionMemory IM(.clk(clk), .rst(rst), .instruction(instr), .address(PC));
-
-
-
 
     // decode stage
     // decode flop
     reg [31 : 0] instrD;
-    always @(posedge clk, posedge flush)if(flush & clk)instrD <= 0; else instrD <= instr;
+    always @(posedge clk, posedge flush, posedge rst)if((flush & clk) | rst)instrD <= 0; else instrD <= instr;
 
     wire [4 : 0] rsD, rtD, rdD; assign rsD = instrD[25 : 21]; assign rtD = instrD[20 : 16]; assign rdD = instrD[15 : 11];
     wire [31 : 0] rsDataD, rtDataD;
@@ -69,20 +70,25 @@ module dataPath(
     reg [5 : 0] rsE, rtE, rdE;
     reg regDstE, aluSrcBE, regWriteE, mem2RegE, memWriteE;
     reg [2 : 0] aluControlE;
-    always @(posedge clk)begin
-        rsDataE     <= rsDataFD;
-        rtDataE     <= rtDataFD;
-        immE        <= immD;
-        rsE         <= rsD;
-        rtE         <= rtD;
-        rdE         <= rdD;
+    always @(posedge clk, posedge rst)begin
+        if(rst)begin
+            memWriteE   <= 0;
+            regWriteE   <= 0;
+        end else begin
+            rsDataE     <= rsDataFD;
+            rtDataE     <= rtDataFD;
+            immE        <= immD;
+            rsE         <= rsD;
+            rtE         <= rtD;
+            rdE         <= rdD;
 
-        memWriteE   <= memWrite;
-        mem2RegE    <= mem2Reg;
-        regDstE     <= regDst;
-        aluSrcBE    <= aluSrcB;
-        aluControlE <= aluControl;
-        regWriteE   <= regWrite;
+            memWriteE   <= memWrite;
+            mem2RegE    <= mem2Reg;
+            regDstE     <= regDst;
+            aluSrcBE    <= aluSrcB;
+            aluControlE <= aluControl;
+            regWriteE   <= regWrite;
+        end
     end
     // execute stage
     wire [31 : 0] operand2; assign operand2 = aluSrcBE?rtDataE : immE;
@@ -97,13 +103,18 @@ module dataPath(
     reg [31 : 0] aluOutM, rtDataM;
     reg regWriteM, mem2RegM, memWriteM;
     reg [4 : 0] writeRegM;
-    always @(posedge clk)begin
-        aluOutM <= aluOutE;
-        rtDataM  <= rtDataE;
-        writeRegM<= writeRegE;
-        regWriteM<= regWriteE;
-        mem2RegM  <= mem2RegE;
-        memWriteM<= memWriteE;
+    always @(posedge clk, posedge rst)begin
+        if(rst)begin
+            memWriteE   <= 0;
+            regWriteE   <= 0;
+        end else begin
+            aluOutM <= aluOutE;
+            rtDataM  <= rtDataE;
+            writeRegM<= writeRegE;
+            regWriteM<= regWriteE;
+            mem2RegM  <= mem2RegE;
+            memWriteM<= memWriteE;
+        end
     end
 
     wire [31 : 0] memDataM;    
@@ -118,12 +129,17 @@ module dataPath(
     reg [31 : 0] memDataWB, aluOutWB;
     reg [4 : 0] writeRegWB;
     reg regWriteWB, mem2RegWB;
-    always @(posedge clk)begin
-        regWriteWB <= regWriteM;
-        memDataWB  <= memDataM;
-        aluOutWB   <= aluOutM;
-        writeRegWB <= writeRegM;
-        mem2RegWB  <= mem2RegM;
+    always @(posedge clk, posedge rst)begin
+        if(rst)begin
+            memWriteE   <= 0;
+            regWriteE   <= 0;
+        end else begin
+            regWriteWB <= regWriteM;
+            memDataWB  <= memDataM;
+            aluOutWB   <= aluOutM;
+            writeRegWB <= writeRegM;
+            mem2RegWB  <= mem2RegM;
+        end
     end
 
     wire [31 : 0] writeRegData; assign writeRegData = mem2RegWB? aluOutWB : memDataWB;
