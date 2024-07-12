@@ -3,7 +3,7 @@
 module instructionMemory (
     input           clk, rst,
     input  [31 : 0] address,
-    output [31 : 0] instr
+    output [31 : 0] instruction
 );
     reg [31 : 0] data [1023 : 0];
     integer  i;
@@ -14,5 +14,5 @@ module instructionMemory (
         end
     end
 
-    assign instr = data[address];
+    assign instruction = data[address];
 endmodule
