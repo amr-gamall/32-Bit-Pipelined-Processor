@@ -34,9 +34,9 @@ module tb;
         memWrite = 0;
         fad = 0; 
         fbd = 0;
-        aluSrcB = 1;
-        regDst = 0;
-        mem2Reg = 1;
+        aluSrcB = 0;
+        regDst = 1;
+        mem2Reg = 0;
 
         #400;
         $finish;
