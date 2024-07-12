@@ -1,5 +1,5 @@
 # 32-Bit-MIPS-Pipelined-Processor 
-****
+
 ## Introduction
 
 - An implementation to *h&h* 32 bit MIPS Pipelined processor with some nuances.
@@ -13,15 +13,10 @@
 
 - The microarchitecture is synthesizeable.
 
-****
 ## Dependencies 
 - python
 - GTKwave or any wave simulator (for simulation purposes)
-- Your synthesis tool (for synthesis purposes)
-- Your uploader and driver ready for uploading.
-****
+
 ## Usage
 
 - Run `python simulate.py <file>.hex` with the appropriate hex file, you can view the outputs at `output.vcd` 
-
-- Run `python synthesize.py <synthesizer tool> <uploader> <Baud rate> <protocol>` to synthesize and upload
