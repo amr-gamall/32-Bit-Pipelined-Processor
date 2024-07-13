@@ -6,16 +6,14 @@
 
 module dataPath(
     input              rst, clk,
-    // cu
     input              regWrite, regDst, memWrite, mem2Reg, aluSrcB, pcSrc,
     input      [2 : 0] aluControl,
-    // for control/hazard
-    output     [5 : 0] opcode, funct,
-    output             eq,
 
-    // hazard inputs
     input      [1 : 0] fad, fbd,
-    input              flush
+    input              flush,
+    output     [4 : 0] RSD, RTD, destinationE, destinationM, 
+    output     [5 : 0] opcode, funct,
+    output             eq, mem2RegEE
 );
     // control outputs
     assign funct = instr[5 : 0];
@@ -26,8 +24,10 @@ module dataPath(
     wire [31 : 0] instr;
     instructionMemory IM(.clk(clk), .rst(rst), .instruction(instr), .address(PC));
 
+
     // decode stage
-    // decode flop
+
+
     reg [31 : 0] instrD;
     always @(posedge clk, posedge flush, posedge rst)if((flush & clk) | rst)instrD <= 0; else instrD <= instr;
 
@@ -58,11 +58,13 @@ module dataPath(
             default: rtDataFD = 0;
         endcase
     end
+    assign RSD = rsD; 
+    assign RTD = rtD;
 
 
 
 
-    // execute flop
+    // execute stage
     reg [31 : 0] rsDataE, rtDataE, immE;
     reg [5 : 0] rsE, rtE, rdE;
     reg regDstE, aluSrcBE, regWriteE, mem2RegE, memWriteE;
@@ -87,16 +89,16 @@ module dataPath(
             regWriteE   <= regWrite;
         end
     end
-    // execute stage
     wire [31 : 0] operand2; assign operand2 = aluSrcBE?immE : rtDataE;
     wire [31 : 0] aluOutE;
     ALU a(.SrcA(rsDataE), .SrcB(operand2), .ALUControl(aluControlE), .ALUResult(aluOutE));
     wire [4 : 0] writeRegE; assign writeRegE = regDstE?rdE:rtE;
 
+    assign destinationE = writeRegE;
+    assign mem2RegEE = mem2RegE;
 
 
-
-    // memory read
+    // memory read stage
     reg [31 : 0] aluOutM, rtDataM;
     reg regWriteM, mem2RegM, memWriteM;
     reg [4 : 0] writeRegM;
@@ -118,11 +120,12 @@ module dataPath(
     dataMemory DM(.clk(clk), .rst(rst), .writeEnable(memWriteM), .address(aluOutM), .dataWrite(rtDataM),
                   .dataOutput(memDataM));
 
+    assign destinationM = writeRegM;
 
 
 
 
-    // writeback flop
+    // writeback stage
     reg [31 : 0] memDataWB, aluOutWB;
     reg [4 : 0] writeRegWB;
     reg regWriteWB, mem2RegWB;
