@@ -12,13 +12,9 @@ module dataPath(
     input      [1 : 0] fad, fbd,
     input              flush,
     output     [4 : 0] RSD, RTD, destinationE, destinationM, 
-    output     [5 : 0] opcode, funct,
+    output     [5 : 0] opcode, funct, opcodeD,
     output             eq, mem2RegEE
 );
-    // control outputs
-    assign funct = instr[5 : 0];
-    assign opcode = instr[31 : 26];
-
     // fetch stage
     reg [31 : 0] PC; always@(posedge clk, posedge rst)if(rst)PC <= 0; else PC <= PC + (pcSrc ? immShiftedD : 1);
     wire [31 : 0] instr;
@@ -29,7 +25,8 @@ module dataPath(
 
 
     reg [31 : 0] instrD;
-    always @(posedge clk, posedge flush, posedge rst)if((flush & clk) | rst)instrD <= 0; else instrD <= instr;
+    always @(posedge clk, posedge rst)if((flush & clk) | rst)instrD <= 0; else instrD <= instr;
+    assign opcodeD = instrD[31 : 26];
 
     wire [4 : 0] rsD, rtD, rdD; assign rsD = instrD[25 : 21]; assign rtD = instrD[20 : 16]; assign rdD = instrD[15 : 11];
     wire [31 : 0] rsDataD, rtDataD;
@@ -41,6 +38,10 @@ module dataPath(
     wire [31 : 0] immD; assign immD = {instrD[15]?16'hffff : 16'h0000 , instrD[15 : 0]};
     wire [31 : 0] immShiftedD = immD;
     assign eq = &(~(rsDataFD ^ rtDataFD));
+
+    assign funct = instrD[5 : 0];
+    assign opcode = instrD[31 : 26];
+
     // forward muxes
     always @(*) begin
         case (fad)

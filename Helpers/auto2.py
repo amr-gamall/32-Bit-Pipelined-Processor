@@ -5,4 +5,4 @@ out = ""
 for i in ff:
 	out+=i
 
-print(out)
+print(hex(int(out, base = 2)))

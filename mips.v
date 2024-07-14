@@ -11,7 +11,8 @@ module mips(input clk, rst);
 
     controlUnit cu(.eq(eq), .regWrite(regWrite), .regDst(regDst),
                    .memWrite(memWrite), .mem2Reg(mem2Reg), .aluSrcB(aluSrcB), 
-                   .pcSrc(pcSrc), .aluControl(aluControl));
+                   .pcSrc(pcSrc), .aluControl(aluControl), .opcode(opcode),
+                   .funct(funct));
 
     hazardUnit hu(.eq(eq), .regWriteE(regWriteE), .regWriteM(regWriteM), .opcode(opcode),
                   .RSD(RSD), .RTD(RTD), .destinationE(destinationE), .destinationM(destinationM),
