@@ -20,10 +20,7 @@ module dataPath(
     wire [31 : 0] instr;
     instructionMemory IM(.clk(clk), .rst(rst), .instruction(instr), .address(PC));
 
-
     // decode stage
-
-
     reg [31 : 0] instrD;
     always @(posedge clk, posedge rst)if((flush & clk) | rst)instrD <= 0; else instrD <= instr;
     assign opcodeD = instrD[31 : 26];
@@ -41,7 +38,6 @@ module dataPath(
 
     assign funct = instrD[5 : 0];
     assign opcode = instrD[31 : 26];
-
     // forward muxes
     always @(*) begin
         case (fad)
@@ -61,9 +57,6 @@ module dataPath(
     end
     assign RSD = rsD; 
     assign RTD = rtD;
-
-
-
 
     // execute stage
     reg [31 : 0] rsDataE, rtDataE, immE;
@@ -98,7 +91,6 @@ module dataPath(
     assign destinationE = writeRegE;
     assign mem2RegEE = mem2RegE;
 
-
     // memory read stage
     reg [31 : 0] aluOutM, rtDataM;
     reg regWriteM, mem2RegM, memWriteM;
@@ -123,9 +115,6 @@ module dataPath(
 
     assign destinationM = writeRegM;
 
-
-
-
     // writeback stage
     reg [31 : 0] memDataWB, aluOutWB;
     reg [4 : 0] writeRegWB;
@@ -142,10 +131,8 @@ module dataPath(
             mem2RegWB  <= mem2RegM;
         end
     end
-
     wire [31 : 0] writeRegData; assign writeRegData = mem2RegWB? memDataWB : aluOutWB;
 endmodule
-
 // Register file nomenclature
     // writeReg       => address of reg to write
     // writeRegData => data to be written
