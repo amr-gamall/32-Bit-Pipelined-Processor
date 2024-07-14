@@ -1,4 +1,4 @@
-`include "data_path.v"
+`include "../data_path.v"
 `timescale 1ns/1ps
 
 module tb;
