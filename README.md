@@ -11,13 +11,24 @@
             2. No need for forward logic of the branch instruction because the sink is already at the decode stage.
             3. Some downs is that the $T_c$ kinda increased by very small fraction which might be neglected (due to the increase of critical path, specifically $T_{mem} + {T_{mux}}$).
     - Decreased the hardware by one adder by inserting a tiny 2 to 1 mux in the PC increment logic.
+- The microarchitecture is synthesizeableISH.
+- You can find the design [here as image](Microarch-Design/microarch.jpg) and [here as pdf](Microarch-Design/microarch_grid.pdf).
 
-- The microarchitecture is synthesizeable.
+    ![Image](Microarch-Design/microarch.jpg)
+
 
 ## Dependencies 
 - python
 - GTKwave or any wave simulator (for simulation purposes)
 
-## Usage
+## Simulation
 
-- Run `python simulate.py <file>.hex` with the appropriate hex file, you can view the outputs at `output.vcd` 
+- To dump your program to the instruction memory insert [this](#snippets-to-insert) to the [instruction memory](Instruction-Memory/instruction_memory.v) file 
+- Run `python Helpers/maketest.py <testbench>.v` with the appropriate hex file, you can view the outputs at `<testbench>.vcd` 
+
+
+## Snippets to insert
+ 1. `
+    initial
+        $readmemh("<program>.hex", data);
+`
