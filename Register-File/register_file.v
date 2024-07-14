@@ -8,14 +8,13 @@ module registerFile (
     reg [31 : 0] registerFileData [31 : 0];
 
 
-    always @(posedge clk, posedge rst) begin
+    always @(negedge clk, posedge rst) begin // don't forget the negedge instead of forwarding overhead.
         if(rst) begin
             for(i = 0; i < 10; i++)
                 registerFileData[i] <= 0;
             registerFileData[10] = 5;
             registerFileData[20] = 5;
         end
-
         else if(writeEnable)
             registerFileData[addressWrite] = dataWrite;
     end
