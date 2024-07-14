@@ -10,6 +10,7 @@
             2. No needed stall anymore because `lw` instruction forwards directly to the decode stage. The thing is in *h&h* micoarch the sink was the execute stage so that if we have a `lw` instructoin and the next instruction uses the destination register then we should stall, however, if the sink changed to be the decode stage we can forward the destination sum of the `lw` instruction to the decode stage.
             2. No need for forward logic of the branch instruction because the sink is already at the decode stage.
             3. Some downs is that the $T_c$ kinda increased by very small fraction which might be neglected (due to the increase of critical path, specifically $T_{mem} + {T_{mux}}$).
+    - Decreased the hardware by one adder by inserting a tiny 2 to 1 mux in the PC increment logic.
 
 - The microarchitecture is synthesizeable.
 
