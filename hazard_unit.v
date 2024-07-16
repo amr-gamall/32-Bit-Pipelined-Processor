@@ -13,9 +13,9 @@ module hazardUnit(input eq, regWriteEH, regWriteDH, mem2RegEH, regWriteMH,
     assign enableE = (mem2RegEH & regWriteEH) & ((rsDH == rdEH) | (rtDH == rdEH));
     assign enableD = (mem2RegEH & regWriteEH) & ((rsDH == rdEH) | (rtDH == rdEH)); 
     always @(*) begin
-        if(regWriteEH && rsDH == rdEH)
+        if(regWriteEH && rsDH == rdEH && rdEH)
             fad = 1;
-        else if(regWriteEH && rsDH == rdMH)
+        else if(regWriteEH && rsDH == rdMH && rdMH)
             if(mem2RegEH) // I'm being smart and indicating if forwarding from the memory is needed without the regwriteM don't forget to remove it from the microarch design IDIOT!
                 fad = 2;
             else
@@ -24,9 +24,9 @@ module hazardUnit(input eq, regWriteEH, regWriteDH, mem2RegEH, regWriteMH,
             fad = 0;
     end
     always @(*) begin
-        if(regWriteEH && rtDH == rdEH)
+        if(regWriteEH && rtDH == rdEH && rdEH)
             fbd = 1;
-        else if(regWriteEH && rtDH == rdMH)
+        else if(regWriteEH && rtDH == rdMH && rdMH)
             if(mem2RegEH) // I'm being smart and indicating if forwarding from the memory is needed without the regwriteM don't forget to remove it from the microarch design IDIOT!
                 fbd = 2;
             else
