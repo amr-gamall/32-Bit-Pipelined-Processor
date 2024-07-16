@@ -71,6 +71,8 @@ module dataPath(
         if(rst)begin
             memWriteE   <= 0;
             regWriteE   <= 0;
+            rdE         <= 1;
+            rtE         <= 1; // to avoid zero register being in destination and thus forwarding the wrong value.
         end else if(!enableE) begin
             rsDataE     <= rsDataFD;
             rtDataE     <= rtDataFD;
