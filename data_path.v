@@ -6,21 +6,21 @@
 
 module dataPath(
     input              rst, clk,
-    input              regWrite, regDst, memWrite, mem2Reg, aluSrcB, pcSrc,
+    input              regWrite, regDst, memWrite, mem2Reg, aluSrcB, pcSrc, enablePC,
     input      [2 : 0] aluControl,
 
     input      [1 : 0] fad, fbd,
-    input              flushD, enableD, enableE,
+    input              flushD, enableD, flushE,
     output     [4 : 0] rsDH, rtDH, rdEH, rdMH, 
     output     [5 : 0] opcode, funct,   
     output             eq, mem2RegEH, regWriteMH, regWriteEH, regWriteDH
 );
-    assign regWriteMH = regWriteE;
-    assign regWriteEH = regWriteM;
+    assign regWriteMH = regWriteM;
+    assign regWriteEH = regWriteE;
     assign regWriteDH = regWrite;
 
     // fetch stage
-    reg [31 : 0] PC; always@(posedge clk, posedge rst)if(rst)PC <= 0; else PC <= PC + (pcSrc ? immShiftedD : 1);
+    reg [31 : 0] PC; always@(posedge clk, posedge rst)if(rst)PC <= 0; else if(!enablePC) PC <= PC + (pcSrc ? immShiftedD : 1);
     wire [31 : 0] instr;
     instructionMemory IM(.clk(clk), .rst(rst), .instruction(instr), .address(PC));
 
@@ -68,10 +68,10 @@ module dataPath(
     reg regDstE, aluSrcBE, regWriteE, mem2RegE, memWriteE;
     reg [2 : 0] aluControlE;
     always @(posedge clk, posedge rst)begin
-        if(rst)begin
+        if(rst | (clk & flushE))begin
             memWriteE   <= 0;
             regWriteE   <= 0;
-        end else if(!enableE) begin
+        end else begin
             rsDataE     <= rsDataFD;
             rtDataE     <= rtDataFD;
             immE        <= immD;
