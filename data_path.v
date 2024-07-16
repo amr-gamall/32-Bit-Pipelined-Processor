@@ -10,11 +10,15 @@ module dataPath(
     input      [2 : 0] aluControl,
 
     input      [1 : 0] fad, fbd,
-    input              flush,
-    output     [4 : 0] RSD, RTD, destinationE, destinationM, 
-    output     [5 : 0] opcode, funct, opcodeD,
-    output             eq, mem2RegEE
+    input              flushD, enableD, enableE,
+    output     [4 : 0] rsDH, rtDH, rdEH, rdMH, 
+    output     [5 : 0] opcode, funct,   
+    output             eq, mem2RegEH, regWriteMH, regWriteEH, regWriteDH
 );
+    assign regWriteMH = regWriteE;
+    assign regWriteEH = regWriteM;
+    assign regWriteDH = regWrite;
+
     // fetch stage
     reg [31 : 0] PC; always@(posedge clk, posedge rst)if(rst)PC <= 0; else PC <= PC + (pcSrc ? immShiftedD : 1);
     wire [31 : 0] instr;
@@ -22,7 +26,7 @@ module dataPath(
 
     // decode stage
     reg [31 : 0] instrD;
-    always @(posedge clk, posedge rst)if((flush & clk) | rst)instrD <= 0; else instrD <= instr;
+    always @(posedge clk, posedge rst)if((flushD & clk) | rst)instrD <= 0; else if (!enableD)instrD <= instr;
     assign opcodeD = instrD[31 : 26];
 
     wire [4 : 0] rsD, rtD, rdD; assign rsD = instrD[25 : 21]; assign rtD = instrD[20 : 16]; assign rdD = instrD[15 : 11];
@@ -55,8 +59,8 @@ module dataPath(
             default: rtDataFD = 0;
         endcase
     end
-    assign RSD = rsD; 
-    assign RTD = rtD;
+    assign rsDH = rsD; 
+    assign rtDH = rtD;
 
     // execute stage
     reg [31 : 0] rsDataE, rtDataE, immE;
@@ -67,7 +71,7 @@ module dataPath(
         if(rst)begin
             memWriteE   <= 0;
             regWriteE   <= 0;
-        end else begin
+        end else if(!enableE) begin
             rsDataE     <= rsDataFD;
             rtDataE     <= rtDataFD;
             immE        <= immD;
@@ -88,8 +92,8 @@ module dataPath(
     ALU a(.SrcA(rsDataE), .SrcB(operand2), .ALUControl(aluControlE), .ALUResult(aluOutE));
     wire [4 : 0] writeRegE; assign writeRegE = regDstE?rdE:rtE;
 
-    assign destinationE = writeRegE;
-    assign mem2RegEE = mem2RegE;
+    assign rdEH = writeRegE;
+    assign mem2RegEH = mem2RegE;
 
     // memory read stage
     reg [31 : 0] aluOutM, rtDataM;
@@ -113,7 +117,7 @@ module dataPath(
     dataMemory DM(.clk(clk), .rst(rst), .writeEnable(memWriteM), .address(aluOutM), .dataWrite(rtDataM),
                   .dataOutput(memDataM));
 
-    assign destinationM = writeRegM;
+    assign rdMH = writeRegM;
 
     // writeback stage
     reg [31 : 0] memDataWB, aluOutWB;

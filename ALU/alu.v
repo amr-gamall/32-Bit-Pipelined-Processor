@@ -6,6 +6,7 @@ module ALU(
 
 localparam 
 add = 3'b010,
+xorr= 3'b011,
 sub = 3'b110,
 andd= 3'b000,
 orr = 3'b001, // ignore for now
@@ -16,6 +17,7 @@ always @(*) begin
         add :  ALUResult = SrcA + SrcB;
         sub :  ALUResult = SrcA - SrcB;
         andd:  ALUResult = SrcA & SrcB;
+        xorr:  ALUResult = SrcA ^ SrcB;
         default: ALUResult = 0;
     endcase
 end

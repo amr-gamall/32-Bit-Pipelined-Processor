@@ -13,12 +13,13 @@ localparam rType = 6'b000000,
 
 // funct fields
 localparam add = 6'b100000;
+localparam sub = 6'b100010;
 
 always @(*)begin
     case (opcode)
-        lw:     {pcSrc, regWrite, regDst, memWrite, mem2Reg, aluSrcB, aluControl} = {1'b0, 1'b1, 1'b0, 1'b0, 1'b1, 1'b0, 3'b010};
+        lw:     {pcSrc, regWrite, regDst, memWrite, mem2Reg, aluSrcB, aluControl} = {1'b0, 1'b1, 1'b0, 1'b0, 1'b1, 1'b1, 3'b010};
         sw:     {pcSrc, regWrite, regDst, memWrite, mem2Reg, aluSrcB, aluControl} = {1'b0, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0, 3'b010};
-        rType:  {pcSrc, regWrite, regDst, memWrite, mem2Reg, aluSrcB, aluControl} = {1'b0, 1'b1, 1'b1, 1'b0, 1'b0, 1'b0, (funct == add) ? 3'b010 : 3'b110};
+        rType:  {pcSrc, regWrite, regDst, memWrite, mem2Reg, aluSrcB, aluControl} = {1'b0, 1'b1, 1'b1, 1'b0, 1'b0, 1'b0, (funct == add) ? 3'b010 : (funct == sub?3'b110 : 3'b011)};
         beq:    {pcSrc, regWrite, regDst, memWrite, mem2Reg, aluSrcB, aluControl} = {eq, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 3'b010};
         default:{pcSrc, regWrite, regDst, memWrite, mem2Reg, aluSrcB, aluControl} = {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 3'b010};
     endcase

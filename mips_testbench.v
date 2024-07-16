@@ -18,7 +18,7 @@ module tb;
         #5;
         rst = 0;
 
-        #350;
+        #10000;
         $finish;
     end
 

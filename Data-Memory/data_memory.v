@@ -10,10 +10,10 @@ module dataMemory (
     integer  i;
     always @(posedge clk, posedge rst) begin
         if(rst)begin
-            for(i = 1;i < 1024&&i!=32;i++)
-                data[i] <= 0;
-            data[32]<= 32'h00000005;                              // $t1 = 0x05;
-            data[33]<= 32'h00000006;
+            data[32]<= 2;
+            data[33]<= 0;
+            data[34]<= 64;
+            data[35]<= 4;
         end
         else if(writeEnable)   
                 data[address] <= dataWrite;

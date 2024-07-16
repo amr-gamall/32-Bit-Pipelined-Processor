@@ -1,19 +1,22 @@
 
-module hazardUnit(input eq, regWriteE, regWriteM, mem2RegEE,
+module hazardUnit(input eq, regWriteEH, regWriteDH, mem2RegEH, regWriteMH,
           input [5 : 0] opcode, 
-          input  [4 : 0] RSD, RTD, destinationE, destinationM, 
-          output flush,
+          input  [4 : 0] rsDH, rtDH, rdEH, rdMH, 
+          output flushD, enableE, enableD,
           output reg [1 : 0] fad, fbd
          );
 
     localparam beq   = 6'b000100;
 
-    assign flush = (opcode == beq) && eq;
+    assign flushD = (opcode == beq) && eq;
+    // stall if lw x, blabla; rtype f, x, x
+    assign enableE = (mem2RegEH & regWriteEH) & ((rsDH == rdEH) | (rtDH == rdEH));
+    assign enableD = (mem2RegEH & regWriteEH) & ((rsDH == rdEH) | (rtDH == rdEH)); 
     always @(*) begin
-        if(regWriteE && RSD == destinationE)
+        if(regWriteEH && rsDH == rdEH)
             fad = 1;
-        else if(regWriteE && RSD == destinationM)
-            if(mem2RegEE)
+        else if(regWriteEH && rsDH == rdMH)
+            if(mem2RegEH) // I'm being smart and indicating if forwarding from the memory is needed without the regwriteM don't forget to remove it from the microarch design IDIOT!
                 fad = 2;
             else
                 fad = 3;
@@ -21,10 +24,10 @@ module hazardUnit(input eq, regWriteE, regWriteM, mem2RegEE,
             fad = 0;
     end
     always @(*) begin
-        if(regWriteE && RTD == destinationE)
+        if(regWriteEH && rtDH == rdEH)
             fbd = 1;
-        else if(regWriteE && RTD == destinationM)
-            if(mem2RegEE)
+        else if(regWriteEH && rtDH == rdMH)
+            if(mem2RegEH) // I'm being smart and indicating if forwarding from the memory is needed without the regwriteM don't forget to remove it from the microarch design IDIOT!
                 fbd = 2;
             else
                 fbd = 3;
