@@ -23,8 +23,5 @@ module registerFile (
         dataA = registerFileData[addressA];
         dataB = registerFileData[addressB];
     end
-    wire [31 : 0] accumlator; assign accumlator = registerFileData[11];
-    wire [31 : 0] xored; assign xored = registerFileData[13];
-    wire [31 : 0] const2; assign const2 = registerFileData[10];
-    wire [31 : 0] const64; assign const64 = registerFileData[12];
+    wire [31 : 0] testRegister; assign testRegister = registerFileData[11];
 endmodule

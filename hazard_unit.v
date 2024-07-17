@@ -8,7 +8,7 @@ module hazardUnit(input eq, regWriteEH, regWriteDH, mem2RegEH, regWriteMH,
 
     localparam beq   = 6'b000100;
 
-    assign flushD = (opcode == beq) && eq;
+    assign flushD = (opcode == beq) && eq; // when taken flush
     // stall if lw x, blabla; rtype f, x, x
     assign flushE = (mem2RegEH & regWriteEH) & ((rsDH == rdEH) | (rtDH == rdEH));
     assign enableD = (mem2RegEH & regWriteEH) & ((rsDH == rdEH) | (rtDH == rdEH)); 

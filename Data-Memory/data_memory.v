@@ -18,6 +18,6 @@ module dataMemory (
         else if(writeEnable)   
                 data[address] <= dataWrite;
     end
-
+    wire [31 : 0] dataTest; assign dataTest = data[36];
     assign dataOutput = data[address];
 endmodule
